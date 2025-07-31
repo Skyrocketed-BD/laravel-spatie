@@ -22,7 +22,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $data = Role::orderBy('id_role', 'asc')->get();
+        $data = Role::orderBy('id', 'asc')->get();
 
         return ApiResponseClass::sendResponse($data, 'Role Retrieved Successfully');
     }
