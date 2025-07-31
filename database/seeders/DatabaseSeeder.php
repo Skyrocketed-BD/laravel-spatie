@@ -12,9 +12,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            Permission::class,
-            Role::class,
-            User::class,
+            RoleSeeder::class,
+            UserSeeder::class,
+            MenuModuleSeeder::class,
+            MenuCategorySeeder::class,
+            MenuBodySeeder::class,
+            MenuChildSeeder::class,
+            RoleAccessSeeder::class,
+            TransactionNameSeeder::class,
+            CogSeeder::class,
+            CoaClasificationSeeder::class,
+            ArrangementsSeeder::class
         ]);
     }
 }

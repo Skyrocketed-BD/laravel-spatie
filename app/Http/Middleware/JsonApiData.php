@@ -9,9 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class JsonApiData
 {
     const PARSED_METHODS = [
-        'POST',
-        'PUT',
-        'PATCH'
+        'POST', 'PUT', 'PATCH'
     ];
 
     /**
@@ -24,7 +22,7 @@ class JsonApiData
         if (in_array($request->getMethod(), self::PARSED_METHODS)) {
             $request->merge((array)json_decode($request->getContent()));
         }
-
+        
         return $next($request);
     }
 }

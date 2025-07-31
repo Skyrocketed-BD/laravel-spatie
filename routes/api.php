@@ -1,79 +1,47 @@
 <?php
 
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\PushyController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PermissionsController;
-use App\Http\Controllers\ProdukController;
-use App\Http\Controllers\MenuCategoryController;
-use App\Http\Controllers\MenuBodyController;
-use App\Http\Controllers\MenuChildController;
-use App\Http\Controllers\RoleController;
 
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'auth'
-], function ($router) {
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    'prefix'     => 'auth',
+], function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api')->name('logout');
-    Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('refresh');
-    Route::post('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
+
+    Route::controller(AuthController::class)->middleware('jwtChecking')->group(function () {
+        Route::post('logout', 'logout');
+        Route::post('refresh', 'refresh');
+        Route::post('me', 'me');
+    });
+
+    Route::post('/mobile-login', [AuthController::class, 'mobile_login'])->name('mobile_login');
 });
 
 Route::group([
-    'middleware' => ['jwtChecking', 'jsonApiData'],
-], function ($router) {
-    Route::prefix('menu')->group(function () {
-        // begin:: menu category
-        Route::prefix('categories')->group(function () {
-            Route::get('/{id_menu_module}', [MenuCategoryController::class, 'index']);
-            Route::post('/', [MenuCategoryController::class, 'store']);
-            Route::get('/{id_menu_module}/{id_menu_category}', [MenuCategoryController::class, 'show']);
-            Route::put('/{id_menu_module}/{id_menu_category}', [MenuCategoryController::class, 'update']);
-            Route::delete('/{id_menu_module}/{id_menu_category}', [MenuCategoryController::class, 'destroy']);
-        });
-        // end:: menu category
+    'middleware' => ['jwtChecking', 'jsonApiData', 'throttle:60,1'],
+], function () {
+    // === BEGIN:: MAIN ===
+    require __DIR__ . '/api/main.php';
+    // === END:: MAIN ===
 
-        // begin:: menu body
-        Route::prefix('bodies')->group(function () {
-            Route::get('/{id_menu_category}', [MenuBodyController::class, 'index']);
-            Route::post('/', [MenuBodyController::class, 'store']);
-            Route::get('/{id_menu_category}/{id_menu_body}', [MenuBodyController::class, 'show']);
-            Route::put('/{id_menu_category}/{id_menu_body}', [MenuBodyController::class, 'update']);
-            Route::delete('/{id_menu_category}/{id_menu_body}', [MenuBodyController::class, 'destroy']);
-            Route::post('/active/{id_menu_category}/{id_menu_body}', [MenuBodyController::class, 'active']);
-        });
-        // end:: menu body
+    // === BEGIN:: FINANCE ===
+    require __DIR__ . '/api/finance.php';
+    // === END:: FINANCE ===
 
-        // begin:: menu child
-        Route::prefix('child')->group(function () {
-            Route::get('/{id_menu_body}', [MenuChildController::class, 'index']);
-            Route::post('/', [MenuChildController::class, 'store']);
-            Route::get('/{id_menu_body}/{id_menu_child}', [MenuChildController::class, 'show']);
-            Route::put('/{id_menu_body}/{id_menu_child}', [MenuChildController::class, 'update']);
-            Route::delete('/{id_menu_body}/{id_menu_child}', [MenuChildController::class, 'destroy']);
-        });
-        // end:: menu child
-    });
+    // === BEGIN:: OPERATION ===
+    require __DIR__ . '/api/operation.php';
+    // === END:: OPERATION ===
 
-    Route::controller(PermissionsController::class)->prefix('permissions')->group(function () {
-        Route::get('/', 'index')->middleware('permission:list-produk');
-    });
-
-    Route::prefix('roles')->group(function () {
-        Route::get('/access/{id_role}/{id_menu_module}', [RoleController::class, 'access']);
-    });
-
-    Route::prefix('role-accesses')->group(function () {
-        Route::post('/action/{id_role_access}', [RoleAccessController::class, 'action']);
-        Route::get('/trees/{id_role}/{id_menu_module}', [RoleAccessController::class, 'trees']);
-    });
-
-    Route::controller(ProdukController::class)->prefix('produk')->group(function () {
-        Route::get('/', 'index')->middleware('permission:list-produk');
-        Route::get('/{id}', 'show')->middleware('permission:show-produk');
-        Route::post('/', 'store')->middleware('permission:create-produk');
-        Route::put('/{id}', 'update')->middleware('permission:update-produk');
-        Route::delete('/{id}', 'destroy')->middleware('permission:delete-produk');
-    });
+    // === BEGIN:: CONTRACT & LEGAL ===
+    require __DIR__ . '/api/contract_legal.php';
+    // === END:: CONTRACT & LEGAL ===
 });
+
+Route::group([
+    'middleware' => 'jwtChecking',
+], function () {
+    Route::post('/push-token', [PushyController::class, 'store']);
+});
+

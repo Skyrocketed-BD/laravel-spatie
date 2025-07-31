@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'cors_allow_origin' => env('APP_CORS_ALLOW_ORIGIN', '*'),
 ];
