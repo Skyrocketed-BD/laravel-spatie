@@ -18,8 +18,7 @@ return new class extends Migration
             $table->increments('id_role_access');
             $table->integer('id_menu_module')->unsigned()->nullable();
             $table->integer('id_menu_body')->unsigned()->nullable();
-            $table->integer('id_role')->unsigned()->nullable();
-            $table->enum('action', ['crud', 'view'])->default('crud');
+            $table->unsignedBigInteger('id_role')->nullable();
 
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
@@ -28,7 +27,7 @@ return new class extends Migration
 
             $table->foreign('id_menu_module')->references('id_menu_module')->on('menu_module')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_menu_body')->references('id_menu_body')->on('menu_body')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('id_role')->references('id_role')->on('role')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_role')->references('id')->on('roles')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

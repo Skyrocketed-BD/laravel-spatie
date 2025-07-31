@@ -74,7 +74,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        if ($user->toRole->name === 'Kontraktor') {
+        if ($user->toModelHasRole->toRole->name === 'Kontraktor') {
             $user->is_logged_in = true;
             $user->count_logged_in = $user->count_logged_in + 1;
             $user->save();

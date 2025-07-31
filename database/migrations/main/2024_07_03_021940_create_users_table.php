@@ -17,7 +17,6 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id_users');
             $table->integer('id_kontraktor')->unsigned()->nullable();
-            $table->integer('id_role')->unsigned()->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('username')->unique();
@@ -37,8 +36,6 @@ return new class extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletes();
-
-            $table->foreign('id_role')->references('id_role')->on('role')->onDelete('restrict')->onUpdate('restrict');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

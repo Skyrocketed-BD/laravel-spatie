@@ -21,8 +21,27 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
+                    'status'  => false,
                     'message' => $e->getMessage(),
                 ], 401);
+            }
+        });
+
+        $exceptions->renderable(function (UnauthorizedException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => $e->getMessage(),
+                ], 403);
+            }
+        });
+
+        $exceptions->renderable(function (AuthorizationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => $e->getMessage(),
+                ], 403);
             }
         });
     })->create();

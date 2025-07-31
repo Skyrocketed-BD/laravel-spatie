@@ -28,7 +28,7 @@ class RoleAccess extends Model
 
     // relasi ke tabel role
     public function toRole()  {
-        return $this->belongsTo(Role::class, 'id_role', 'id_role');
+        return $this->belongsTo(Role::class, 'id_role', 'id');
     }
 
     protected function casts(): array

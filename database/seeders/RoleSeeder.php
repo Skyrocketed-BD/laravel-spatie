@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\main\Role;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class RoleSeeder extends Seeder
 {
@@ -12,31 +12,37 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-            [
-                'id_role' => 1,
-                'name'    => 'Administrator',
-            ],
-            [
-                'id_role' => 2,
-                'name'    => 'Kontraktor',
-            ],
-            [
-                'id_role' => 3,
-                'name'    => 'Akunting',
-            ],
-            [
-                'id_role' => 4,
-                'name'    => 'Kasir',
-            ],
-            [
-                'id_role' => 5,
-                'name'    => 'Data Entry',
-            ]
-        ];
+        $adminsitrator = Role::create([
+            'name'       => 'Administrator',
+            'guard_name' => 'api',
+        ]);
 
-        foreach ($roles as $key => $value) {
-            DB::table('role')->insert($value);
-        }
+        $kontraktor = Role::create([
+            'name'       => 'Kontraktor',
+            'guard_name' => 'api',
+        ]);
+
+        $akunting = Role::create([
+            'name'       => 'Akunting',
+            'guard_name' => 'api',
+        ]);
+
+        $kasir = Role::create([
+            'name'       => 'Kasir',
+            'guard_name' => 'api',
+        ]);
+
+        $data_entry = Role::create([
+            'name'       => 'Data Entry',
+            'guard_name' => 'api',
+        ]);
+
+        $adminsitrator->givePermissionTo([
+            'list-produk',
+            'show-produk',
+            'create-produk',
+            'update-produk',
+            'delete-produk',
+        ]);
     }
 }

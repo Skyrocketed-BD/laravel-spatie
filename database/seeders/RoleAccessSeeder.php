@@ -20,7 +20,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 1,
                 'id_menu_body'      => $menu_body[$i-1],
                 'id_role'           => 1,
-                'action'            => 'crud',
             ];
         }
 
@@ -32,7 +31,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 2,
                 'id_menu_body'      => $menu_body[$i-1],
                 'id_role'           => 1,
-                'action'            => 'crud',
             ];
         }
 
@@ -44,7 +42,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 3,
                 'id_menu_body'      => $menu_body[$i-1],
                 'id_role'           => 1,
-                'action'            => 'crud',
             ];
         }
 
@@ -57,7 +54,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 2,
                 'id_menu_body'      => $kontraktor[$i-1],
                 'id_role'           => 2,
-                'action'            => 'crud',
             ];
         }
 
@@ -68,7 +64,6 @@ class RoleAccessSeeder extends Seeder
             'id_menu_module'    => 3,
             'id_menu_body'      => 2,
             'id_role'           => 3,
-            'action'            => 'crud',
         ];
         $counter = count($role_access);
         for ($i=1; $i < 12; $i++) {
@@ -77,7 +72,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 3,
                 'id_menu_body'      => 8 + $i,
                 'id_role'           => 3,
-                'action'            => 'crud',
             ];
         }
 
@@ -90,7 +84,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 3,
                 'id_menu_body'      => $kasir[$i-1],
                 'id_role'           => 4,
-                'action'            => 'crud',
             ];
         }
 
@@ -103,7 +96,6 @@ class RoleAccessSeeder extends Seeder
                 'id_menu_module'    => 2,
                 'id_menu_body'      => $data_entry[$i-1],
                 'id_role'           => 5,
-                'action'            => 'crud',
             ];
         }
 

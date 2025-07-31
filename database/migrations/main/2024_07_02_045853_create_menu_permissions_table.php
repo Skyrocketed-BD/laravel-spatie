@@ -6,22 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    // specific connection database
-    protected $connection = 'mysql';
-    
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('role', function (Blueprint $table) {
-            $table->increments('id_role');
-            $table->string('name', 50)->nullable();
+        Schema::create('menu_permission', function (Blueprint $table) {
+            $table->increments('id_menu_permission');
+            $table->integer('id_menu_body')->unsigned()->nullable();
+            $table->unsignedBigInteger('id_permission')->nullable();
 
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+
+            $table->foreign('id_menu_body')->references('id_menu_body')->on('menu_body')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_permission')->references('id')->on('permissions')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('role');
+        Schema::dropIfExists('menu_permission');
     }
 };

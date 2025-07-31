@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     use SoftDeletes;
 
@@ -29,7 +30,6 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'id_users',
         'id_kontraktor',
-        'id_role',
         'name',
         'email',
         'username',
@@ -80,7 +80,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
     // untuk relasi
-    protected $with = ['toUserNotifications', 'toRole.toRoleAccess.toMenuBody.toMenuCategory.toMenuModule'];
+    protected $with = [
+        'toUserNotifications',
+        'toModelHasRole.toRoleAccess.toMenuBody.toMenuCategory.toMenuModule',
+    ];
 
     // relasi ke tabel kontraktor
     public function toKontraktor()
@@ -88,10 +91,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->setConnection('operation')->belongsTo(Kontraktor::class, 'id_kontraktor', 'id_kontraktor');
     }
 
-    // relasi ke tabel role
-    public function toRole()
+    public function toModelHasRole()
     {
-        return $this->belongsTo(Role::class, 'id_role', 'id_role');
+        return $this->hasOne(ModelHasRole::class, 'model_id', 'id_users');
     }
 
     // relasi ke tabel user_notifications

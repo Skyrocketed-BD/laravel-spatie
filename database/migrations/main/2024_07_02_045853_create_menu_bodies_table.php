@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('menu_body', function (Blueprint $table) {
             $table->increments('id_menu_body');
             $table->integer('id_menu_category')->unsigned()->nullable();
+            $table->integer('parent_id')->nullable();
             $table->string('name', 50)->nullable();
             $table->string('icon', 50)->nullable();
             $table->string('url', 50)->nullable();
