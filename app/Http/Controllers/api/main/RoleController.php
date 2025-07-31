@@ -282,8 +282,6 @@ class RoleController extends Controller
             }
         }
 
-        dd($menu_module, $menu_category, $menu_body, $menu_child);
-
         usort($menu_body, function ($a, $b) {
             return $a['position'] <=> $b['position'];
         });
