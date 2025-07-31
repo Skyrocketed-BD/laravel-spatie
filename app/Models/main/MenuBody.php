@@ -16,6 +16,7 @@ class MenuBody extends Model
     protected $fillable = [
         'id_menu_body',
         'id_menu_category',
+        'parent_id',
         'name',
         'icon',
         'url',
@@ -42,9 +43,8 @@ class MenuBody extends Model
     protected function casts(): array
     {
         return [
-            'id_menu_body' => 'integer',
+            'id_menu_body'     => 'integer',
             'id_menu_category' => 'integer',
-            // 'is_enabled' => 'integer',
         ];
     }
 
