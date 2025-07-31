@@ -75,7 +75,13 @@ Route::apiResource('/menu-modules', MenuModuleController::class);
 // end:: menu module
 
 // begin:: kontak
-Route::apiResource('/kontak', KontakController::class);
+Route::controller(KontakController::class)->prefix('kontak')->group(function () {
+    Route::get('/', 'index')->middleware('permission:list-kontak');
+    Route::get('/{id}', 'show')->middleware('permission:show-kontak');
+    Route::post('/', 'store')->middleware('permission:create-kontak');
+    Route::put('/{id}', 'update')->middleware('permission:update-kontak');
+    Route::delete('/{id}', 'destroy')->middleware('permission:delete-kontak');
+});
 // end:: kontak
 
 // begin:: kontak jenis

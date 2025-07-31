@@ -38,11 +38,11 @@ class RoleSeeder extends Seeder
         ]);
 
         $adminsitrator->givePermissionTo([
-            'list-produk',
-            'show-produk',
-            'create-produk',
-            'update-produk',
-            'delete-produk',
+            'list-kontak',
+            'show-kontak',
+            'create-kontak',
+            'update-kontak',
+            'delete-kontak',
         ]);
     }
 }

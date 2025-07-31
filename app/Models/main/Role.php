@@ -18,17 +18,13 @@ class Role extends ModelsRole
         'guard_name',
     ];
 
-    // protected $with = ['toRoleAccess'];
-
     // relasi ke tabel role_access
     public function toRoleAccess()  {
         return $this->hasMany(RoleAccess::class, 'id_role');
     }
 
-    // protected function casts(): array
-    // {
-    //     return [
-    //         'id' => 'integer',
-    //     ];
-    // }
+    // relasi ke tabel role_has_permission
+    public function toRoleHasPermission()  {
+        return $this->hasMany(RoleHasPermission::class, 'role_id');
+    }
 }

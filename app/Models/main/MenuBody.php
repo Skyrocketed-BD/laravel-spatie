@@ -33,6 +33,12 @@ class MenuBody extends Model
         return $this->hasMany(MenuChild::class, 'id_menu_body', 'id_menu_body');
     }
 
+    // relasi ke tabel menu_permission
+    public function toMenuPermission()
+    {
+        return $this->hasMany(MenuPermission::class, 'id_menu_body', 'id_menu_body');
+    }
+
     protected function casts(): array
     {
         return [

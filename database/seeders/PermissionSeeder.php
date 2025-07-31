@@ -32,6 +32,26 @@ class PermissionSeeder extends Seeder
             [
                 'name'       => 'delete-produk',
                 'guard_name' => 'api',
+            ],
+            [
+                'name'       => 'list-kontak',
+                'guard_name' => 'api',
+            ],
+            [
+                'name'       => 'show-kontak',
+                'guard_name' => 'api',
+            ],
+            [
+                'name'       => 'create-kontak',
+                'guard_name' => 'api',
+            ],
+            [
+                'name'       => 'update-kontak',
+                'guard_name' => 'api',
+            ],
+            [
+                'name'       => 'delete-kontak',
+                'guard_name' => 'api',
             ]
         ];
 

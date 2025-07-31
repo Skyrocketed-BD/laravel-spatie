@@ -205,15 +205,26 @@ class RoleController extends Controller
      */
     public function access($id_role, $id_menu_module)
     {
-        $data = Role::find($id_role);
+        $data = Role::with(['toRoleAccess'])->find($id_role);
 
-        $access = $data->toRoleAccess;
+        $permission = $data->toRoleHasPermission;
 
+        // untuk role permission
+        $role_permission = [];
+
+        foreach ($permission as $key => $value) {
+            $role_permission[$value->permission_id] = $value->toPermission->name;
+        }
+
+        // untuk role access
         $menu_module   = [];
         $menu_category = [];
         $menu_body     = [];
         $menu_child    = [];
         $menus         = [];
+        $permission    = [];
+
+        $access = $data->toRoleAccess;
 
         foreach ($access as $key => $value) {
             if ($value->toMenuBody->toMenuCategory->toMenuModule) {
@@ -231,33 +242,47 @@ class RoleController extends Controller
                     'position'         => $value->toMenuBody->toMenuCategory->position,
                 ];
             }
+
             usort($menu_category, function ($a, $b) {
                 return $a['position'] <=> $b['position'];
             });
 
-            if ($value->toMenuBody->toMenuChild) {
-                foreach ($value->toMenuBody->toMenuChild as $key2 => $value2) {
+            if ($value->toMenuBody->is_enabled == 1) {
+                // permission
+                if ($value->toMenuBody->toMenuPermission->count() > 0) {
+                    foreach ($value->toMenuBody->toMenuPermission as $key => $row) {
+                        if (!empty($role_permission[$row->id_permission])) {
+                            $permission[$row->id_menu_body][] = [
+                                'id_permission' => $row->id_permission,
+                                'name'          => $row->toPermission->name,
+                            ];
+                        }
+                    }
+                }
+
+                if ($value->toMenuBody->parent_id === 0) {
+                    $menu_body[] = [
+                        'id_menu_category' => $value->toMenuBody->toMenuCategory->id_menu_category,
+                        'id_menu_body'     => $value->toMenuBody->id_menu_body,
+                        'name'             => $value->toMenuBody->name,
+                        'icon'             => $value->toMenuBody->icon,
+                        'url'              => $value->toMenuBody->url,
+                        'is_enabled'       => $value->toMenuBody->is_enabled,
+                        'position'         => $value->toMenuBody->position,
+                    ];
+                } else {
                     $menu_child[] = [
-                        'id_menu_child' => $value2->id_menu_child,
-                        'id_menu_body'  => $value2->id_menu_body,
-                        'name'          => $value2->name,
-                        'url'           => $value2->url,
+                        'id_menu_body'  => $value->toMenuBody->id_menu_body,
+                        'parent_id'     => $value->toMenuBody->parent_id,
+                        'name'          => $value->toMenuBody->name,
+                        'icon'          => $value->toMenuBody->icon,
+                        'url'           => $value->toMenuBody->url,
                     ];
                 }
             }
-
-            if ($value->toMenuBody->is_enabled == 1) {
-                $menu_body[] = [
-                    'id_menu_category' => $value->toMenuBody->toMenuCategory->id_menu_category,
-                    'id_menu_body'     => $value->toMenuBody->id_menu_body,
-                    'name'             => $value->toMenuBody->name,
-                    'icon'             => $value->toMenuBody->icon,
-                    'url'              => $value->toMenuBody->url,
-                    'is_enabled'       => $value->toMenuBody->is_enabled,
-                    'position'         => $value->toMenuBody->position,
-                ];
-            }
         }
+
+        dd($menu_module, $menu_category, $menu_body, $menu_child);
 
         usort($menu_body, function ($a, $b) {
             return $a['position'] <=> $b['position'];
@@ -267,19 +292,21 @@ class RoleController extends Controller
         $menu_category = array_unique($menu_category, SORT_REGULAR);
 
         foreach ($menu_child as $key3 => $value3) {
-            $child[$value3['id_menu_body']][] = [
-                'icon'     => 'Dot',
-                'title'    => $value3['name'],
-                'pathname' => $value3['url'],
+            $child[$value3['parent_id']][] = [
+                'icon'       => $value3['icon'],
+                'title'      => $value3['name'],
+                'pathname'   => $value3['url'],
+                'permission' => $permission[$value3['id_menu_body']] ?? '',
             ];
         }
 
         foreach ($menu_body as $key2 => $value2) {
             $body[$value2['id_menu_category']][] = [
-                'icon'     => $value2['icon'],
-                'title'    => $value2['name'],
-                'pathname' => $value2['url'],
-                'subMenu'  => $child[$value2['id_menu_body']] ?? '',
+                'icon'       => $value2['icon'],
+                'title'      => $value2['name'],
+                'pathname'   => $value2['url'],
+                'permission' => $permission[$value2['id_menu_body']] ?? '',
+                'subMenu'    => $child[$value2['id_menu_body']] ?? '',
             ];
         }
 
