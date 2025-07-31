@@ -7,7 +7,9 @@ use App\Helpers\ActivityLogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\main\RoleRequest;
 use App\Models\main\Role;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -180,6 +182,40 @@ class RoleController extends Controller
         }
     }
 
+    public function revoke(Request $request, $id)
+    {
+        try {
+            $data = Role::find($id);
+
+            $data->revokePermissionTo($request->permission);
+
+            ActivityLogHelper::log('admin:role_revoke', 1, ['name' => $data->name]);
+
+            return ApiResponseClass::sendResponse($data, 'Role Revoked Successfully');
+        } catch (\Exception $e) {
+            ActivityLogHelper::log('admin:role_revoke', 0, ['error' => $e->getMessage()]);
+
+            return ApiResponseClass::throw('Cannot revoke data', 409, $e->getMessage());
+        }
+    }
+
+    public function give(Request $request, $id)
+    {
+        try {
+            $data = Role::find($id);
+
+            $data->givePermissionTo($request->permission);
+
+            ActivityLogHelper::log('admin:role_give', 1, ['name' => $data->name]);
+
+            return ApiResponseClass::sendResponse($data, 'Role Given Successfully');
+        } catch (\Exception $e) {
+            ActivityLogHelper::log('admin:role_give', 0, ['error' => $e->getMessage()]);
+
+            return ApiResponseClass::throw('Cannot give data', 409, $e->getMessage());
+        }
+    }
+
     /**
      * @OA\Get(
      *  path="/roles/access/{id_role}/{id_menu_module}",
@@ -248,36 +284,45 @@ class RoleController extends Controller
             });
 
             if ($value->toMenuBody->is_enabled == 1) {
-                // permission
+                $hasListPermission = false;
+
+                // Cek apakah ada permission yang diawali 'list'
                 if ($value->toMenuBody->toMenuPermission->count() > 0) {
                     foreach ($value->toMenuBody->toMenuPermission as $key => $row) {
-                        if (!empty($role_permission[$row->id_permission])) {
-                            $permission[$row->id_menu_body][] = [
-                                'id_permission' => $row->id_permission,
-                                'name'          => $row->toPermission->name,
-                            ];
+                        $permissionName = $row->toPermission->name;
+
+                        if (Str::startsWith($permissionName, 'list') && !empty($role_permission[$row->id_permission])) {
+                            $hasListPermission = true;
                         }
+
+                        $permission[$row->id_menu_body][] = [
+                            'id_permission' => $row->id_permission,
+                            'name'          => $permissionName,
+                        ];
                     }
                 }
 
-                if ($value->toMenuBody->parent_id === 0) {
-                    $menu_body[] = [
-                        'id_menu_category' => $value->toMenuBody->toMenuCategory->id_menu_category,
-                        'id_menu_body'     => $value->toMenuBody->id_menu_body,
-                        'name'             => $value->toMenuBody->name,
-                        'icon'             => $value->toMenuBody->icon,
-                        'url'              => $value->toMenuBody->url,
-                        'is_enabled'       => $value->toMenuBody->is_enabled,
-                        'position'         => $value->toMenuBody->position,
-                    ];
-                } else {
-                    $menu_child[] = [
-                        'id_menu_body'  => $value->toMenuBody->id_menu_body,
-                        'parent_id'     => $value->toMenuBody->parent_id,
-                        'name'          => $value->toMenuBody->name,
-                        'icon'          => $value->toMenuBody->icon,
-                        'url'           => $value->toMenuBody->url,
-                    ];
+                // Hanya tampilkan jika punya permission 'list-*'
+                if ($hasListPermission) {
+                    if ($value->toMenuBody->parent_id === 0) {
+                        $menu_body[] = [
+                            'id_menu_category' => $value->toMenuBody->toMenuCategory->id_menu_category,
+                            'id_menu_body'     => $value->toMenuBody->id_menu_body,
+                            'name'             => $value->toMenuBody->name,
+                            'icon'             => $value->toMenuBody->icon,
+                            'url'              => $value->toMenuBody->url,
+                            'is_enabled'       => $value->toMenuBody->is_enabled,
+                            'position'         => $value->toMenuBody->position,
+                        ];
+                    } else {
+                        $menu_child[] = [
+                            'id_menu_body'  => $value->toMenuBody->id_menu_body,
+                            'parent_id'     => $value->toMenuBody->parent_id,
+                            'name'          => $value->toMenuBody->name,
+                            'icon'          => $value->toMenuBody->icon,
+                            'url'           => $value->toMenuBody->url,
+                        ];
+                    }
                 }
             }
         }

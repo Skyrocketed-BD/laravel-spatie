@@ -85,7 +85,6 @@ class User extends Authenticatable implements JWTSubject
         'toModelHasRole.toRoleAccess.toMenuBody.toMenuCategory.toMenuModule',
     ];
 
-    // relasi ke tabel kontraktor
     public function toKontraktor()
     {
         return $this->setConnection('operation')->belongsTo(Kontraktor::class, 'id_kontraktor', 'id_kontraktor');
@@ -96,7 +95,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(ModelHasRole::class, 'model_id', 'id_users');
     }
 
-    // relasi ke tabel user_notifications
     public function toUserNotifications()
     {
         return $this->hasMany(UserNotification::class, 'id_users', 'id_users');

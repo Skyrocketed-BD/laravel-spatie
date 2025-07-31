@@ -78,7 +78,7 @@ class UserController extends Controller
         DB::connection('mysql')->beginTransaction();
         try {
             $user           = new User();
-            $user->id_role  = $request->id_role;
+            // $user->id_role  = $request->id_role;
             $user->name     = $request->name;
             $user->username = $request->username;
             $user->email    = $request->email;

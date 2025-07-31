@@ -16,11 +16,13 @@ class UserResource extends JsonResource
     {
         $module = [];
 
-        foreach ($this->toModelHasRole->toRoleAccess as $key => $value) {
-            $module[] = [
-                'id_module' => $value->toMenuBody->toMenuCategory->toMenuModule->id_menu_module,
-                'name'      => $value->toMenuBody->toMenuCategory->toMenuModule->name,
-            ];
+        if ($this->toModelHasRole) {
+            foreach ($this->toModelHasRole->toRoleAccess as $key => $value) {
+                $module[] = [
+                    'id_module' => $value->toMenuBody->toMenuCategory->toMenuModule->id_menu_module,
+                    'name'      => $value->toMenuBody->toMenuCategory->toMenuModule->name,
+                ];
+            }
         }
 
         $module = array_unique($module, SORT_REGULAR);
@@ -30,8 +32,8 @@ class UserResource extends JsonResource
         $result['color']          = $this->toKontraktor ? $this->toKontraktor->color : null;
         $result['company']        = $this->toKontraktor ? $this->toKontraktor->company : get_arrangement('company_name');
         $result['id_users']       = $this->id_users;
-        $result['id_role']        = $this->toModelHasRole->toRole->id;
-        $result['role']           = $this->toModelHasRole->toRole->name;
+        $result['id_role']        = $this->toModelHasRole->toRole->id ?? null;
+        $result['role']           = $this->toModelHasRole->toRole->name ?? null;
 
         $result['name']           = $this->name;
         $result['email']          = $this->email;

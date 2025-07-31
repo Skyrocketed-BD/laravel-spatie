@@ -25,26 +25,41 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status'  => false,
-                    'message' => $e->getMessage(),
+                    'message' => 'Unauthorized',
+                    'error'   => ['error' => $e->getMessage()],
                 ], 401);
             }
         });
 
         $exceptions->renderable(function (UnauthorizedException $e, Request $request) {
             if ($request->is('api/*')) {
+                // return response()->json([
+                //     'status'  => false,
+                //     'message' => 'Unauthorized',
+                //     'error'   => ['error' => $e->getMessage()],
+                // ], 401);
                 return response()->json([
                     'status'  => false,
+                    'errors'   => 'Unauthorized',
                     'message' => $e->getMessage(),
-                ], 403);
+                ], 401);
             }
         });
 
         $exceptions->renderable(function (AuthorizationException $e, Request $request) {
+            // if ($request->is('api/*')) {
+            //     return response()->json([
+            //         'status'  => false,
+            //         'message' => 'Unauthorized',
+            //         'error'   => ['error' => $e->getMessage()],
+            //     ], 401);
+            // }
             if ($request->is('api/*')) {
                 return response()->json([
                     'status'  => false,
+                    'errors'   => 'Unauthorized',
                     'message' => $e->getMessage(),
-                ], 403);
+                ], 401);
             }
         });
     })->create();

@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('roles')->group(function () {
     Route::get('/', [RoleController::class, 'index']);
     Route::post('/', [RoleController::class, 'store']);
+    Route::post('/revoke/{id_users}', [RoleController::class, 'revoke']);
+    Route::post('/give/{id_users}', [RoleController::class, 'give']);
     Route::get('/{id_role}', [RoleController::class, 'show']);
     Route::put('/{id_role}', [RoleController::class, 'update']);
     Route::delete('/{id_role}', [RoleController::class, 'destroy']);
@@ -37,13 +39,13 @@ Route::prefix('role-accesses')->group(function () {
 
 // begin:: users
 Route::prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::get('/{id}', [UserController::class, 'show']);
-    Route::put('/{id}', [UserController::class, 'update']);
-    Route::delete('/{id}', [UserController::class, 'destroy']);
-    Route::post('/active/{id}', [UserController::class, 'active']);
-    Route::post('/reset/{id}', [UserController::class, 'reset']);
+    Route::get('/', [UserController::class, 'index'])->middleware('permission:list-user');
+    Route::post('/', [UserController::class, 'store'])->middleware('permission:create-user');
+    Route::get('/{id}', [UserController::class, 'show'])->middleware('permission:show-user');
+    Route::put('/{id}', [UserController::class, 'update'])->middleware('permission:update-user');
+    Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('permission:delete-user');
+    Route::post('/active/{id}', [UserController::class, 'active'])->middleware('permission:active-user');
+    Route::post('/reset/{id}', [UserController::class, 'reset'])->middleware('permission:reset-user');
 });
 
 Route::prefix('user-profile')->group(function () {
